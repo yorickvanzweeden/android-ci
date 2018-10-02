@@ -1,12 +1,11 @@
 FROM ubuntu:18.04
 LABEL maintainer="Yorick van Zweeden"
 
-ENV VERSION_SDK_TOOLS "4333796"
-ENV VERSION_COMPILE_VERSION "24"
-ENV AVD_NAME "test"
-
-ENV ANDROID_HOME "/sdk"
-# ENV PATH "$PATH:${ANDROID_HOME}/tools"
+# Variables taken from variables.env
+ARG AVD_NAME
+ARG ANDROID_HOME
+ARG VERSION_COMPILE_VERSION
+ARG VERSION_SDK_TOOLS
 
 # Expect requires tzdata, which requires a timezone specified
 RUN ln -fs /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
@@ -44,7 +43,7 @@ RUN rm -f /etc/ssl/certs/java/cacerts; \
     /var/lib/dpkg/info/ca-certificates-java.postinst configure
 
 # Downloading SDK-tools (AVDManager, SDKManager, etc)
-RUN curl -s https://dl.google.com/android/repository/sdk-tools-linux-${VERSION_SDK_TOOLS}.zip > /sdk.zip && \
+RUN curl -s https://dl.google.com/android/repository/sdk-tools-linux-"${VERSION_SDK_TOOLS}".zip > /sdk.zip && \
     unzip /sdk.zip -d /sdk && \
     rm -v /sdk.zip
 
