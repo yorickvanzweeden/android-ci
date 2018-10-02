@@ -12,3 +12,5 @@ services:
     # Then start a container from the just built image in privileged mode to finish what's left
     entrypoint: /commands-to-run-in-privileged-mode.sh
     privileged: true
+    volumes:
+       - "./snapshot-data:/sdk/snapshot_temp:z"

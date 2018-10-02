@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 echo "Running further commands"
 
+mkdir /sdk/snapshot/
+cp -r /sdk/snapshot_temp/* /sdk/snapshot/
+
+exit
+echo "HELLL"
 echo "## Create snapshot container"
 /sdk/emulator/qemu-img create -f qcow2 /sdk/emulator/snapshots.img 500M
 

@@ -22,7 +22,7 @@ until [[ "$bootanim" =~ "stopped" ]]; do
     echo "No emulators were found"
     exit 1
   fi
-  sleep 10
+  sleep 1
 done
 
 echo "Emulator is ready"

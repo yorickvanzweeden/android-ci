@@ -4,7 +4,7 @@ cd ~/Android/Sdk/emulator
 echo "start emulator"
 # sudo ./emulator64-x86 -avd test -snapshot-list -no-window -no-audio -snapshot snapshot4 -snapstorage ~/snapshots.img &
 # sudo ./emulator64-x86 -avd test -snapshot-list -no-window -no-audio -snapshot snapshot4 -snapstorage ~/Android/snapshots_qcow.img &
-sudo ./emulator64-x86 -avd test -snapshot-list -no-window -no-audio -snapshot snapshot4 -snapstorage ~/Android/snapshots_qcow2.img &
+# sudo ./emulator64-x86 -avd test -no-window -no-audio -snapshot snapshot4 -snapstorage ~/Android/snapshots.img.qcow2 &
 
 echo "cd android-ci"
 cd ~/Repositories/android-ci
@@ -34,7 +34,7 @@ adb devices
 
 token="$(sudo cat ~/.emulator_console_auth_token)"
 
-emulator_name="myemulator"
+snapshot_name="myemulator"
 port="5554"
 
 

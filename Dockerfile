@@ -58,10 +58,8 @@ RUN mkdir ~/.android/avd  && \
       echo no | ${ANDROID_HOME}/tools/bin/avdmanager create avd -n ${AVD_NAME} -k "system-images;android-${VERSION_COMPILE_VERSION};google_apis;x86_64"
 
 # Run gradle to speedup later startups
-RUN mkdir /opt/gradle
-RUN wget --quiet --output-document=/opt/gradle/gradle.zip "https://services.gradle.org/distributions/gradle-4.4-all.zip"
-RUN unzip -d /opt/gradle/ /opt/gradle/gradle.zip
+# RUN mkdir /opt/gradle
+# RUN wget --quiet --output-document=/opt/gradle/gradle.zip "https://services.gradle.org/distributions/gradle-4.4-all.zip"
+# RUN unzip -d /opt/gradle/ /opt/gradle/gradle.zip
 
-COPY commands-to-run-in-privileged-mode.sh /
-COPY android-wait-for-emulator /
-COPY create-snapshot.sh /
+COPY scripts/* /
