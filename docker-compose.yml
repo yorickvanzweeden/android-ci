@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  your_service:
+    container_name: emulator
+    image: "emulator"
+    build:
+      # Dockerfile location
+      context: .
+      args:
+        - AVD_NAME=${AVD_NAME}
+        - ANDROID_HOME=${ANDROID_HOME}
+        - VERSION_COMPILE_VERSION=${VERSION_COMPILE_VERSION}
+        - VERSION_SDK_TOOLS=${VERSION_SDK_TOOLS}
+
+    # Run scripts in container in privileged mode
+    entrypoint: /commands-to-run-in-privileged-mode.sh ${AVD_NAME} ${SNAPSHOT_NAME}
+    privileged: true
+    env_file:
+      - .env
