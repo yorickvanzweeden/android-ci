@@ -3,14 +3,13 @@ version: '3'
 services:
   your_service:
     container_name: emulator
-    # First build the image from the Dockerfile
-    build:
-      # Change this to where you keep above Dockerfile
-      context: .
     image: "emulator"
+    build:
+      # Dockerfile location
+      context: .
 
-    # Then start a container from the just built image in privileged mode to finish what's left
+    # Run scripts in container in privileged mode
     entrypoint: /commands-to-run-in-privileged-mode.sh
     privileged: true
-    volumes:
-       - "./snapshot-data:/sdk/snapshot_temp:z"
+    env_file:
+      - variables.env

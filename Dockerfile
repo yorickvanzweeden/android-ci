@@ -6,13 +6,18 @@ ENV VERSION_COMPILE_VERSION "24"
 ENV AVD_NAME "test"
 
 ENV ANDROID_HOME "/sdk"
-ENV PATH "$PATH:${ANDROID_HOME}/tools"
+# ENV PATH "$PATH:${ANDROID_HOME}/tools"
+
+# Expect requires tzdata, which requires a timezone specified
+RUN ln -fs /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
 
 RUN apt-get -qq update && \
       apt-get install -qqy --no-install-recommends \
       bridge-utils \
       bzip2 \
       curl \
+      # expect: Passing commands to telnet
+      expect \
       git-core \
       html2text \
       lib32gcc1 \
@@ -22,16 +27,23 @@ RUN apt-get -qq update && \
       libc6-i386 \
       libqt5svg5 \
       libqt5widgets5 \
+      # libvirt-bin: Virtualisation for emulator
       libvirt-bin \
       openjdk-8-jdk \
+      # qemu-kvm: Hardware acceleration for emulator
       qemu-kvm \
+      # telnet: Communicating with emulator
+      telnet \
+      # ubuntu-vm-builder: Building VM for emulator
       ubuntu-vm-builder \
       unzip \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# Configurating Java
 RUN rm -f /etc/ssl/certs/java/cacerts; \
     /var/lib/dpkg/info/ca-certificates-java.postinst configure
 
+# Downloading SDK-tools (AVDManager, SDKManager, etc)
 RUN curl -s https://dl.google.com/android/repository/sdk-tools-linux-${VERSION_SDK_TOOLS}.zip > /sdk.zip && \
     unzip /sdk.zip -d /sdk && \
     rm -v /sdk.zip
@@ -46,7 +58,6 @@ ADD packages.txt /sdk
 RUN mkdir -p /root/.android && \
   touch /root/.android/repositories.cfg && \
   ${ANDROID_HOME}/tools/bin/sdkmanager --update 
-
 RUN while read -r package; do PACKAGES="${PACKAGES}${package} "; done < /sdk/packages.txt && \
     ${ANDROID_HOME}/tools/bin/sdkmanager ${PACKAGES}
 
@@ -57,9 +68,5 @@ RUN echo y | ${ANDROID_HOME}/tools/bin/sdkmanager "system-images;android-${VERSI
 RUN mkdir ~/.android/avd  && \
       echo no | ${ANDROID_HOME}/tools/bin/avdmanager create avd -n ${AVD_NAME} -k "system-images;android-${VERSION_COMPILE_VERSION};google_apis;x86_64"
 
-# Run gradle to speedup later startups
-# RUN mkdir /opt/gradle
-# RUN wget --quiet --output-document=/opt/gradle/gradle.zip "https://services.gradle.org/distributions/gradle-4.4-all.zip"
-# RUN unzip -d /opt/gradle/ /opt/gradle/gradle.zip
-
+# Copy scripts to container for running the emulator and creating a snapshot
 COPY scripts/* /
