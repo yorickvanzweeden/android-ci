@@ -1,0 +1,10 @@
+#!/bin/bash
+
+/bin/false
+
+until [[ "$?" -eq 0 ]]; do
+  sleep 3
+  echo "Looking for listener"
+  netstat -plnt | grep 5554
+done
+echo "We there"

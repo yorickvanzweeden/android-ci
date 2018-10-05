@@ -1,0 +1,11 @@
+#!/bin/bash
+
+/bin/false
+
+until [[ "$?" -eq 0 ]]; do
+  sleep 2
+  echo "Searching device"
+  /sdk/platform-tools/adb devices | grep "device"
+done
+
+echo "Emulator is device"
