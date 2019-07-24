@@ -2,8 +2,10 @@ FROM ubuntu:18.04
 LABEL maintainer="Yorick van Zweeden"
 
 # Variables taken from variables.env
-ARG ANDROID_HOME="/usr/local/android-sdk"
-ARG VERSION_COMPILE_VERSION=28
+ARG ANDROID_HOME=/sdk
+ARG AVD_NAME=myavd
+ARG SNAPSHOT_NAME=myemulator
+ARG VERSION_COMPILE_VERSION=24
 ARG VERSION_SDK_TOOLS=4333796
 
 # Expect requires tzdata, which requires a timezone specified
@@ -41,23 +43,22 @@ RUN apt-get -qq update && \
 RUN rm -f /etc/ssl/certs/java/cacerts; \
     /var/lib/dpkg/info/ca-certificates-java.postinst configure
 
+# Downloading SDK-tools (AVDManager, SDKManager, etc)
+RUN curl -s https://dl.google.com/android/repository/sdk-tools-linux-"${VERSION_SDK_TOOLS}".zip > /sdk.zip && \
+    unzip /sdk.zip -d /sdk && \
+    rm -v /sdk.zip
+
 # Add Android licences instead of acceptance
 RUN mkdir -p $ANDROID_HOME/licenses/ \
   && echo "d56f5187479451eabf01fb78af6dfcb131a6481e" > $ANDROID_HOME/licenses/android-sdk-license \
   && echo "84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_HOME/licenses/android-sdk-preview-license
 
-# Downloading SDK-tools (AVDManager, SDKManager, etc)
-RUN cd $ANDROID_HOME && \
-    curl -s https://dl.google.com/android/repository/sdk-tools-linux-"${VERSION_SDK_TOOLS}".zip > ./sdk.zip && \
-    unzip ./sdk.zip -d ./sdk && \
-    rm -v ./sdk.zip
-
 # Download packages
-ADD packages.txt ./sdk
+ADD packages.txt /sdk
 RUN mkdir -p /root/.android && \
   touch /root/.android/repositories.cfg && \
   ${ANDROID_HOME}/tools/bin/sdkmanager --update 
-RUN while read -r package; do PACKAGES="${PACKAGES}${package} "; done < ./sdk/packages.txt && \
+RUN while read -r package; do PACKAGES="${PACKAGES}${package} "; done < /sdk/packages.txt && \
     ${ANDROID_HOME}/tools/bin/sdkmanager ${PACKAGES}
 
 # Download system image for compiled version (separate statement for build cache)
@@ -68,3 +69,4 @@ RUN mkdir ~/.android/avd  && \
       echo no | ${ANDROID_HOME}/tools/bin/avdmanager create avd -n ${AVD_NAME} -k "system-images;android-${VERSION_COMPILE_VERSION};google_apis;x86_64"
 
 # Copy scripts to container for running the emulator and creating a snapshot
+COPY scripts/* /
