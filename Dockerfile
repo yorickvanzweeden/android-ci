@@ -2,10 +2,9 @@ FROM ubuntu:18.04
 LABEL maintainer="Yorick van Zweeden"
 
 # Variables taken from variables.env
-ARG AVD_NAME
-ARG ANDROID_HOME
-ARG VERSION_COMPILE_VERSION
-ARG VERSION_SDK_TOOLS
+ARG ANDROID_HOME="/usr/local/android-sdk"
+ARG VERSION_COMPILE_VERSION=28
+ARG VERSION_SDK_TOOLS=4333796
 
 # Expect requires tzdata, which requires a timezone specified
 RUN ln -fs /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
@@ -68,4 +67,3 @@ RUN mkdir ~/.android/avd  && \
       echo no | ${ANDROID_HOME}/tools/bin/avdmanager create avd -n ${AVD_NAME} -k "system-images;android-${VERSION_COMPILE_VERSION};google_apis;x86_64"
 
 # Copy scripts to container for running the emulator and creating a snapshot
-COPY scripts/* /
