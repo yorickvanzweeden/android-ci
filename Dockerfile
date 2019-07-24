@@ -48,16 +48,16 @@ RUN mkdir -p $ANDROID_HOME/licenses/ \
 
 # Downloading SDK-tools (AVDManager, SDKManager, etc)
 RUN cd $ANDROID_HOME && \
-    curl -s https://dl.google.com/android/repository/sdk-tools-linux-"${VERSION_SDK_TOOLS}".zip > /sdk.zip && \
-    unzip /sdk.zip -d /sdk && \
-    rm -v /sdk.zip
+    curl -s https://dl.google.com/android/repository/sdk-tools-linux-"${VERSION_SDK_TOOLS}".zip > ./sdk.zip && \
+    unzip ./sdk.zip -d ./sdk && \
+    rm -v ./sdk.zip
 
 # Download packages
-ADD packages.txt /sdk
+ADD packages.txt ./sdk
 RUN mkdir -p /root/.android && \
   touch /root/.android/repositories.cfg && \
   ${ANDROID_HOME}/tools/bin/sdkmanager --update 
-RUN while read -r package; do PACKAGES="${PACKAGES}${package} "; done < /sdk/packages.txt && \
+RUN while read -r package; do PACKAGES="${PACKAGES}${package} "; done < ./sdk/packages.txt && \
     ${ANDROID_HOME}/tools/bin/sdkmanager ${PACKAGES}
 
 # Download system image for compiled version (separate statement for build cache)
