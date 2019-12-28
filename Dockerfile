@@ -50,7 +50,11 @@ RUN curl -s https://dl.google.com/android/repository/sdk-tools-linux-"${VERSION_
 # Add Android licences instead of acceptance
 RUN mkdir -p $ANDROID_HOME/licenses/ \
   && echo "d56f5187479451eabf01fb78af6dfcb131a6481e" > $ANDROID_HOME/licenses/android-sdk-license \
-  && echo "84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_HOME/licenses/android-sdk-preview-license
+  && echo "84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_HOME/licenses/android-sdk-preview-license \
+  && echo "601085b94cd77f0b54ff86406957099ebe79c4d6" > /sdk/licenses/android-googletv-license \
+  && echo "84831b9409646a918e30573bab4c9c91346d8abd" > /sdk/licenses/android-sdk-preview-license \
+  && echo "e9acab5b5fbb560a72cfaecce8946896ff6aab9d" > /sdk/licenses/mips-android-sysimage-license \
+  && echo "33b6a2b64607f11b759f320ef9dff4ae5c47d97a" > /sdk/licenses/google-gdk-license
 
 # Download packages
 ADD packages.txt /sdk
@@ -58,7 +62,8 @@ RUN mkdir -p /root/.android && \
   touch /root/.android/repositories.cfg && \
   ${ANDROID_HOME}/tools/bin/sdkmanager --update 
 RUN while read -r package; do PACKAGES="${PACKAGES}${package} "; done < /sdk/packages.txt && \
-    ${ANDROID_HOME}/tools/bin/sdkmanager ${PACKAGES}
+  yes | ${ANDROID_HOME}/tools/bin/sdkmanager ${PACKAGES}
+
 
 # Download system image for compiled version (separate statement for build cache)
 RUN echo y | ${ANDROID_HOME}/tools/bin/sdkmanager "system-images;android-${VERSION_COMPILE_VERSION};google_apis;x86_64"
